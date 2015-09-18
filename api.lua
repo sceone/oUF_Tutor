@@ -122,6 +122,123 @@ A.CreateTexts = function(f)
 	f.HealthValue = healthVal
 end
 
+A.CreatePortrait = function(f)
+	f.Health:SetPoint("TOPLEFT", 64, 0)
+	local p = CreateFrame("PlayerModel", nil, f)
+	p:SetPoint("TOPLEFT", 1, -1)
+	p:SetPoint("BOTTOMRIGHT", f.Health, "BOTTOMLEFT", -1, 0)
+	
+	f.Portrait = p
+end
+
+A.CreateCastBar = function(f)
+	local unit = f.unit
+	
+	local cb = CreateFrame("StatusBar", f:GetName() .. "CastBar", f)
+	cb:SetStatusBarTexture(powerTex)
+	cb:SetStatusBarColor(1, .8, 0, 1)
+	
+	local bg = CreateFrame("Frame", nil, cb)
+	cb.bg = bg
+	bg:SetFrameLevel(0)
+	bg:SetBackdrop(backdropTbl)
+	bg:SetBackdropColor(0, 0, 0, 1)
+	
+	if unit == "player" then
+		bg:SetSize(C["playerCastbar"]["width"], C["playerCastbar"]["height"])
+		local rel1, anchor, rel2, offx, offy = unpack(C["playerCastbar"]["pos"])
+		bg:SetPoint(rel1, anchor, rel2, offx, offy)
+	else
+		bg:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 0, -4)
+		bg:SetPoint("TOPRIGHT", f, "BOTTOMRIGHT", 0, -4)
+		bg:SetHeight(unit == "target" and 22 or 18)
+	end
+	
+	cb:SetPoint("TOPLEFT", bg, "TOPLEFT", bg:GetHeight(), -1)
+	cb:SetPoint("BOTTOMRIGHT", bg, "BOTTOMRIGHT", -1, 1)
+	
+	local bg2 = cb:CreateTexture(nil, "BACKGROUND")
+	bg2:SetAllPoints()
+	bg2:SetTexture(powerTex)
+	bg2:SetVertexColor(.3, .24, 0, 1)
+	
+	local icon = cb:CreateTexture(nil, "ARTWORK")
+	icon:SetPoint("TOPLEFT", bg, "TOPLEFT", 1, -1)
+	icon:SetPoint("BOTTOMRIGHT", cb, "BOTTOMLEFT", -1, 0)
+	icon:SetTexCoord(.1, .9, .1, .9)
+	
+	local timer = cb:CreateFontString(nil, "OVERLAY")
+	timer:SetFont(font2, 11, "OUTLINE")
+	timer:SetPoint("RIGHT", -2, 0)
+	
+	local text = cb:CreateFontString(nil, "OVERLAY")
+	text:SetFont(font1, 11, "OUTLINE")
+	text:SetJustifyH("LEFT")
+	text:SetPoint("LEFT", 2, 0)
+	text:SetPoint("RIGHT", timer, "LEFT", -5, 0)
+	
+	cb.Text = text
+	cb.Time = timer
+	cb.Icon = icon
+	f.Castbar = cb
+end
+
+A.CreateAura = function(f, size)
+	size, spacing = size or 20, 5
+	local numRow = math.floor( f:GetWidth() / (size + spacing) )
+	
+	local b = CreateFrame("Frame", nil, f)
+	b:SetFrameStrata(f:GetFrameStrata())
+	b:SetWidth(numRow * (size + spacing))
+	b.size = size
+	b.spacing = spacing
+	b.numRow = numRow
+	b.PostCreateIcon = A.PostCreateAura
+	
+	local d = CreateFrame("Frame", nil, f)
+	d:SetFrameStrata(f:GetFrameStrata())
+	d:SetWidth(numRow * (size + spacing))
+	d.size = size
+	d.spacing = spacing
+	d.numRow = numRow
+	d.PostCreateIcon = A.PostCreateAura
+	
+	if f.unit == "target" then
+		b:SetHeight((size + spacing) * 2)
+		b:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 0, -30)
+		b.num = numRow * 2
+		b.initialAnchor = "TOPLEFT"
+		b["growth-x"] = "RIGHT"
+		b["growth-y"] = "DOWN"
+		b.PostUpdate = A.UpdateTargetDebuffHeader
+		
+		d:SetHeight((size + spacing) * 4)
+		d:SetPoint("TOPLEFT", b, "TOPLEFT")
+		d.num = numRow * 4
+		d.initialAnchor = "TOPLEFT"
+		d["growth-x"] = "RIGHT"
+		d["growth-y"] = "DOWN"
+	else
+		b:SetHeight(size)
+		b:SetPoint("BOTTOMRIGHT", f, "TOPRIGHT", 0, 5)
+		b.num = 3
+		b.initialAnchor = "BOTTOMRIGHT"
+		b["growth-x"] = "LEFT"
+				
+		d:SetHeight(size)
+		d:SetPoint("BOTTOMLEFT", f, "TOPLEFT", 0, 5)
+		d.num = 3
+		d.initialAnchor = "BOTTOMLEFT"
+		d["growth-x"] = "RIGHT"
+		if f.unit:find("boss") then
+			d.filter = "HARMFUL|PLAYER"
+		end
+	end
+	
+	f.Buffs = b
+	f.Debuffs = d
+end
+
 A.Position = function(f)
 	local unit = f.unit
 	local pos = C[unit] and C[unit]["pos"]
@@ -173,3 +290,22 @@ A.GetAnchor = function(anchor)
 	end
 end
 
+A.PostCreateAura = function(buffheader, aura)
+	aura.icon:SetTexCoord(.1, .9, .1, .9)
+	
+	aura.cd:SetReverse(true)
+	
+	aura.bg = aura:CreateTexture(nil, "BACKGROUND")
+	aura.bg:SetPoint("TOPLEFT", -1, 1)
+	aura.bg:SetPoint("BOTTOMRIGHT", 1, -1)
+	aura.bg:SetTexture(.6, .6, .6)
+end
+
+local ceil = math.ceil
+A.UpdateTargetDebuffHeader = function(Buffs)
+	local rows = ceil(Buffs.visibleBuffs / Buffs.numRow)
+	local Debuffs = Buffs:GetParent()["Debuffs"]
+	local gap = rows == 0 and 0 or 10
+	
+	Debuffs:SetPoint("TOPLEFT", Buffs, "TOPLEFT", 0, -(rows * (Buffs.size + Buffs.spacing) + gap) )
+end

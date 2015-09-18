@@ -56,6 +56,12 @@ C["boss"] = {
 	pos = {"RIGHT", UIParent, "RIGHT", -260, 120}	-- boss1 point
 }
 
+C["playerCastbar"] = {
+	width = 240,
+	height = 30,
+	pos = {"BOTTOM", UIParent, "BOTTOM", 0, 200}
+}
+
 ------------------------------
 -- media
 ------------------------------
