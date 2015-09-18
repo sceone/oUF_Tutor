@@ -18,7 +18,131 @@ local backdropTbl = {
 }
 
 ------------------------------
--- API
+-- Layout API
+------------------------------
+
+A.InitButton = function(f, unit)
+	f:SetScript("OnEnter", UnitFrame_OnEnter)
+	f:SetScript("OnLeave", UnitFrame_OnLeave)
+	
+	f:SetFrameStrata("LOW")
+	
+	--if unit:match("(raid)%d?$") ~= "raid" and unit:match("(party)%d?$") ~= "party" then
+	if unit:match("(boss)%d?$") == "boss" then
+		f:SetSize(C["boss"]["width"], C["boss"]["height"])
+	elseif not unit:find("raid") then
+		f:SetSize(C[unit]["width"], C[unit]["height"])
+	end
+	
+	f:SetBackdrop(backdropTbl)
+	f:SetBackdropColor(.1, .1, .1)
+	A.CreateShadow(f)
+end
+
+A.CreateHealth = function(f)
+	local health = CreateFrame("StatusBar", nil, f)
+	health:SetFrameStrata(f:GetFrameStrata())
+	health:SetPoint("TOPLEFT")
+	health:SetPoint("TOPRIGHT")
+	health:SetStatusBarTexture(healthTex)
+	
+	if f.unit == "player" or f.unit == "target" or f.unit:match("(boss)%d?$") == "boss" then
+		health:SetHeight(f:GetHeight() - 10)
+	else
+		health:SetHeight(f:GetHeight() - 7)
+	end
+	
+	health.bg = health:CreateTexture(nil, "BACKGROUND")
+	health.bg:SetAllPoints()
+	health.bg:SetTexture(bgTex)
+	
+	A.AddSettings(health, "frequentUpdates", "colorClass", "colorHealth")
+	health.bg.multiplier = 0.2
+	
+	f.Health = health
+end
+
+A.CreatePower = function(f)
+	local power = CreateFrame("StatusBar", nil, f)
+	power:SetFrameStrata(f:GetFrameStrata())
+	power:SetPoint("BOTTOMLEFT")
+	power:SetPoint("BOTTOMRIGHT")
+	power:SetStatusBarTexture(powerTex)
+	
+	if f.unit == "player" or f.unit == "target" or f.unit:match("(boss)%d?$") == "boss" then
+		power:SetHeight(9)
+	else
+		power:SetHeight(6)
+	end
+		
+	power.bg = power:CreateTexture(nil, "BACKGROUND")
+	power.bg:SetAllPoints()
+	power.bg:SetTexture(bgTex)
+	
+	A.AddSettings(power, "colorPower", "colorClass")
+	power.bg.multiplier = 0.2
+	
+	f.Power = power
+end
+
+A.CreateTexts = function(f)
+	local parent = f.Health or f
+	
+	local name = parent:CreateFontString(nil, "OVERLAY")
+	
+	local healthVal = parent:CreateFontString(nil, "OVERLAY")
+	healthVal:SetTextColor(.8, .8, .8)
+	
+	if f.unit == "player" or f.unit == "target" or f.unit:match("(boss)%d?$") == "boss" then
+		name:SetFont(font1, 14, "OUTLINE")
+		name:SetPoint("TOPLEFT", 8, -4)
+		f:Tag(name, "[level] [name]")
+	
+		healthVal:SetFont(font2, 12, "OUTLINE")
+		healthVal:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -8, 3)
+		f:Tag(healthVal, "[curhp] | [perhp]%")
+		
+		local powerVal = parent:CreateFontString(nil, "OVERLAY")
+		powerVal:SetFont(font2, 12, "OUTLINE")
+		powerVal:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 8, 3)
+		powerVal:SetTextColor(.8, .8, .8)
+		f:Tag(powerVal, "[curpp]")
+		f.PowerValue = powerVal
+	else
+		name:SetFont(font1, 12, "OUTLINE")
+		name:SetPoint("LEFT", 6, 0)
+		f:Tag(name, "[name]")
+	
+		healthVal:SetFont(font2, 11, "OUTLINE")
+		healthVal:SetPoint("RIGHT", -4, 0)
+		f:Tag(healthVal, "[perhp]%")
+	end
+	
+	f.Name = name
+	f.HealthValue = healthVal
+end
+
+A.Position = function(f)
+	local unit = f.unit
+	local pos = C[unit] and C[unit]["pos"]
+	if not pos then return end
+	
+	local rel1, anchor, rel2, offx, offy = unpack(pos)
+	anchor = A.GetAnchor(anchor)
+
+	f:SetPoint(rel1, anchor, rel2, offx, offy)
+end
+
+A.AddSettings = function(element, ...)
+	for _, key in pairs({...}) do
+		if not element[key] then
+			element[key] = true
+		end
+	end
+end
+
+------------------------------
+-- Util
 ------------------------------
 
 A.CreateShadow = function(f)
@@ -49,94 +173,3 @@ A.GetAnchor = function(anchor)
 	end
 end
 
-A.Position = function(f)
-	local unit = f.unit
-	local pos = C[unit]["pos"]
-	if not pos then return end
-	
-	local rel1, anchor, rel2, offx, offy = unpack(pos)
-	anchor = A.GetAnchor(anchor)
-
-	f:SetPoint(rel1, anchor, rel2, offx, offy)
-end
-
-A.InitButton = function(f, unit)
-	f:SetScript("OnEnter", UnitFrame_OnEnter)
-	f:SetScript("OnLeave", UnitFrame_OnLeave)
-	
-	f:SetFrameStrata("LOW")
-	f:SetSize(C[unit]["width"], C[unit]["height"])
-	
-	f:SetBackdrop(backdropTbl)
-	f:SetBackdropColor(.1, .1, .1)
-	A.CreateShadow(f)
-end
-
-A.CreateHealth = function(f)
-	local health = CreateFrame("StatusBar", nil, f)
-	health:SetFrameStrata(f:GetFrameStrata())
-	health:SetPoint("TOPLEFT")
-	health:SetPoint("TOPRIGHT")
-	health:SetHeight(f:GetHeight() - 10)
-	health:SetStatusBarTexture(powerTex)
-	
-	health.bg = health:CreateTexture(nil, "BACKGROUND")
-	health.bg:SetAllPoints()
-	health.bg:SetTexture(bgTex)
-	
-	A.AddSettings(health, "frequentUpdates", "colorClass", "colorHealth")
-	health.bg.multiplier = 0.2
-	
-	f.Health = health
-end
-
-A.CreatePower = function(f)
-	local power = CreateFrame("StatusBar", nil, f)
-	power:SetFrameStrata(f:GetFrameStrata())
-	power:SetPoint("BOTTOMLEFT")
-	power:SetPoint("BOTTOMRIGHT")
-	power:SetHeight(9)
-	power:SetStatusBarTexture(powerTex)
-	
-	power.bg = power:CreateTexture(nil, "BACKGROUND")
-	power.bg:SetAllPoints()
-	power.bg:SetTexture(bgTex)
-	
-	A.AddSettings(power, "colorPower", "colorClass")
-	power.bg.multiplier = 0.2
-	
-	f.Power = power
-end
-
-A.CreateTexts = function(f)
-	local parent = f.Health or f
-	
-	local name = parent:CreateFontString(nil, "OVERLAY")
-	name:SetFont(font1, 14, "OUTLINE")
-	name:SetPoint("TOPLEFT", 8, -4)
-	f:Tag(name, "[level] [name]")
-	
-	local healthVal = parent:CreateFontString(nil, "OVERLAY")
-	healthVal:SetFont(font2, 12, "OUTLINE")
-	healthVal:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -8, 3)
-	healthVal:SetTextColor(.8, .8, .8)
-	f:Tag(healthVal, "[curhp] | [perhp]%")
-	
-	local powerVal = parent:CreateFontString(nil, "OVERLAY")
-	powerVal:SetFont(font2, 12, "OUTLINE")
-	powerVal:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 8, 3)
-	powerVal:SetTextColor(.8, .8, .8)
-	f:Tag(powerVal, "[curpp]")
-	
-	f.Name = name
-	f.HealthValue = healthVal
-	f.PowerValue = powerVal
-end
-
-A.AddSettings = function(element, ...)
-	for _, key in pairs({...}) do
-		if not element[key] then
-			element[key] = true
-		end
-	end
-end

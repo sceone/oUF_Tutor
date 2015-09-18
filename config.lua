@@ -15,15 +15,45 @@ table.insert(ns, M)
 ------------------------------
 
 C["player"] = {
-	width = 250,
-	height = 36,
+	width = 240,
+	height = 40,
 	pos = {"TOPLEFT", UIParent, "TOPLEFT", 60, -30}
 }
 
+C["pet"] = {
+	width = 120,
+	height = 24,
+	pos = {"TOPLEFT", "player", "BOTTOMLEFT", 0, -12}
+}
+
 C["target"] = {
-	width = 250,
-	height = 36,
+	width = 240,
+	height = 40,
 	pos = {"TOPLEFT", "player", "TOPRIGHT", 40, 0}
+}
+
+C["targettarget"] = {
+	width = 120,
+	height = 24,
+	pos = {"TOPLEFT", "target", "TOPRIGHT", 15, 0}
+}
+
+C["focus"] = {
+	width = 160,
+	height = 30,
+	pos = {"TOPLEFT", "player", "BOTTOMLEFT", 0, -160}
+}
+
+C["focustarget"] = {
+	width = 120,
+	height = 24,
+	pos = {"TOPLEFT", "focus", "BOTTOMLEFT", 0, -40}
+}
+
+C["boss"] = {
+	width = 180,
+	height = 30,
+	pos = {"RIGHT", UIParent, "RIGHT", -260, 120}	-- boss1 point
 }
 
 ------------------------------
