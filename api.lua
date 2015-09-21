@@ -95,6 +95,9 @@ A.CreateTexts = function(f)
 	if f.unit == "player" or f.unit == "target" or f.unit:match("(boss)%d?$") == "boss" then
 		name:SetFont(font1, 14, "OUTLINE")
 		name:SetPoint("TOPLEFT", 8, -4)
+		name:SetPoint("TOPRIGHT", -8, -4)
+		name:SetJustifyH("LEFT")
+		name:SetMaxLines(1)
 		f:Tag(name, "[level] [name]")
 	
 		healthVal:SetFont(font2, 12, "OUTLINE")

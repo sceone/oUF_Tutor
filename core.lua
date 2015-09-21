@@ -150,7 +150,7 @@ end
 M.Party = oUF:SpawnHeader(
 	"oUF_TutorParty",
 	nil,
-	nil,
+	"custom [@raid1, exists] hide; [group:party,nogroup:raid] show; hide",
 	-- attributes
 	"initial-width", C.party.width,
 	"initial-height", C.party.height,
@@ -164,6 +164,7 @@ M.Party = oUF:SpawnHeader(
 	"showSolo", false,
 	"showPlayer", false,
 	"point", "TOP",
+	"xOffset", 0,
 	"yOffset", -50
 )
 M.Party:SetPoint(unpack(C.party.pos))
