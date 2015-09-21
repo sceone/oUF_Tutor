@@ -52,8 +52,26 @@ C["focustarget"] = {
 
 C["boss"] = {
 	width = 180,
-	height = 30,
+	height = 34,
 	pos = {"RIGHT", UIParent, "RIGHT", -260, 120}	-- boss1 point
+}
+
+C["party"] = {
+	width = 200,
+	height = 34,
+	pos = {"TOPLEFT", UIParent, "LEFT", 60, 0}
+}
+
+C["raid25"] = {
+	width = 72,
+	height = 44,
+	pos = {"TOPLEFT", UIParent, "LEFT", 25, -50}
+}
+
+C["raid40"] = {
+	width = 72,
+	height = 34,
+	pos = {"TOPLEFT", UIParent, "LEFT", 25, 0}
 }
 
 C["playerCastbar"] = {

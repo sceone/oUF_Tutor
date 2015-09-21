@@ -27,10 +27,9 @@ A.InitButton = function(f, unit)
 	
 	f:SetFrameStrata("LOW")
 	
-	--if unit:match("(raid)%d?$") ~= "raid" and unit:match("(party)%d?$") ~= "party" then
 	if unit:match("(boss)%d?$") == "boss" then
 		f:SetSize(C["boss"]["width"], C["boss"]["height"])
-	elseif not unit:find("raid") then
+	elseif not (unit == "party" or unit == "raid") then
 		f:SetSize(C[unit]["width"], C[unit]["height"])
 	end
 	
@@ -123,7 +122,11 @@ A.CreateTexts = function(f)
 end
 
 A.CreatePortrait = function(f)
-	f.Health:SetPoint("TOPLEFT", 64, 0)
+	if f.unit == "player" or f.unit == "target" then
+		f.Health:SetPoint("TOPLEFT", 64, 0)
+	else
+		f.Health:SetPoint("TOPLEFT", 48, 0)
+	end
 	local p = CreateFrame("PlayerModel", nil, f)
 	p:SetPoint("TOPLEFT", 1, -1)
 	p:SetPoint("BOTTOMRIGHT", f.Health, "BOTTOMLEFT", -1, 0)
@@ -237,6 +240,29 @@ A.CreateAura = function(f, size)
 	
 	f.Buffs = b
 	f.Debuffs = d
+end
+
+A.CreateRaidElements = function(f)
+	local name = f.Health:CreateFontString(nil, "OVERLAY")
+	name:SetFont(font1, 12, "OUTLINE")
+	name:SetPoint("TOPLEFT", 4, -12)
+	f:Tag(name, "[name]")
+	
+	local role = f.Health:CreateTexture(nil, "OVERLAY")
+	role:SetSize(14, 14)
+	role:SetPoint("TOPLEFT", 3, 2)
+	
+	local leader = f.Health:CreateTexture(nil, "OVERLAY")
+	leader:SetSize(14, 14)
+	leader:SetPoint("LEFT", role, "RIGHT", 3, 0)
+	
+	f.Name = name
+	f.LFDRole = role
+	f.Leader = leader
+	f.Range = {
+		insideAlpha = 1,
+		outsideAlpha = .4
+	}
 end
 
 A.Position = function(f)
