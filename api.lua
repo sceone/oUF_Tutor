@@ -97,7 +97,7 @@ A.CreateTexts = function(f)
 		name:SetPoint("TOPLEFT", 8, -4)
 		f:Tag(name, "[level] [name]")
 	
-		healthVal:SetFont(font2, 12, "OUTLINE")
+		healthVal:SetFont(font1, 12, "OUTLINE")
 		healthVal:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -8, 3)
 		f:Tag(healthVal, "[curhpabb] | [perhp]%")
 		
