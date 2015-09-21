@@ -5,8 +5,21 @@ local C, A, M = unpack(ns)
 -- New tags
 ------------------------------
 
+local FormatLargeNumber = function(val)
+	if not val then return "0" end
+	if val < 1e6 then
+		return AbbreviateLargeNumbers(val)
+	elseif val < 1e7 then
+		return string.format("%.2fm", val/1e6)
+	elseif val < 1e8 then
+		return string.format("%.1fm", val/1e6)
+	else
+		return string.format("%dm", val/1e6)
+	end
+end
+
 oUF.Tags.Methods["curhpabb"] = function(unit)
-	return AbbreviateLargeNumbers(UnitHealth(unit))
+	return FormatLargeNumber(UnitHealth(unit))
 end
 oUF.Tags.Events["curhpabb"] = "UNIT_HEALTH"
 
