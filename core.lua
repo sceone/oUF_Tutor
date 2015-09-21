@@ -154,7 +154,7 @@ M.Party = oUF:SpawnHeader(
 	-- attributes
 	"initial-width", C.party.width,
 	"initial-height", C.party.height,
-	"ouF-initialConfigFunction", [[
+	"oUF-initialConfigFunction", [[
 		local header = self:GetParent()
 		self:SetWidth(header:GetAttribute("initial-width"))
 		self:SetHeight(header:GetAttribute("initial-height"))
@@ -176,7 +176,7 @@ M.Raid25 = oUF:SpawnHeader(
 	-- attributes
 	"initial-width", C.raid25.width,
 	"initial-height", C.raid25.height,
-	"ouF-initialConfigFunction", [[
+	"oUF-initialConfigFunction", [[
 		local header = self:GetParent()
 		self:SetWidth(header:GetAttribute("initial-width"))
 		self:SetHeight(header:GetAttribute("initial-height"))
@@ -203,7 +203,7 @@ M.Raid40 = oUF:SpawnHeader(
 	-- attributes
 	"initial-width", C.raid40.width,
 	"initial-height", C.raid40.height,
-	"ouF-initialConfigFunction", [[
+	"oUF-initialConfigFunction", [[
 		local header = self:GetParent()
 		self:SetWidth(header:GetAttribute("initial-width"))
 		self:SetHeight(header:GetAttribute("initial-height"))
