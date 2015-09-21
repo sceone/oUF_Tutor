@@ -1,7 +1,7 @@
 ## Interface: 60200
 ## Title: oUF Tutor
 ## Notes: oUF framework usage tutorial
-## Version: 0.5
+## Version: 0.6
 ## Dependencies: oUF
 
 embeds.xml

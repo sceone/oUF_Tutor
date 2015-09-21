@@ -99,7 +99,7 @@ A.CreateTexts = function(f)
 	
 		healthVal:SetFont(font2, 12, "OUTLINE")
 		healthVal:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -8, 3)
-		f:Tag(healthVal, "[curhp] | [perhp]%")
+		f:Tag(healthVal, "[curhpabb] | [perhp]%")
 		
 		local powerVal = parent:CreateFontString(nil, "OVERLAY")
 		powerVal:SetFont(font2, 12, "OUTLINE")
@@ -246,7 +246,7 @@ A.CreateRaidElements = function(f)
 	local name = f.Health:CreateFontString(nil, "OVERLAY")
 	name:SetFont(font1, 12, "OUTLINE")
 	name:SetPoint("TOPLEFT", 4, -12)
-	f:Tag(name, "[name]")
+	f:Tag(name, "[nameshort]")
 	
 	local role = f.Health:CreateTexture(nil, "OVERLAY")
 	role:SetSize(14, 14)
